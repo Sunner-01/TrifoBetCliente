@@ -64,7 +64,7 @@ export default function NosotrosPage() {
       <section className="mb-16">
         <div className="relative h-64 md:h-96 rounded-xl overflow-hidden mb-8">
           <Image
-            src="/placeholder.svg?height=400&width=1200&text=TrifoBet+Team"
+            src="/nosotros_banner.png"
             alt="Equipo TrifoBet"
             width={1200}
             height={400}
@@ -119,11 +119,11 @@ export default function NosotrosPage() {
           </div>
           <div className="relative">
             <Image
-              src="/placeholder.svg?height=400&width=600&text=Historia+TrifoBet"
+              src="/nosotros_banner.png"
               alt="Historia de TrifoBet"
               width={600}
               height={400}
-              className="rounded-lg shadow-lg"
+              className="rounded-lg shadow-lg object-cover"
             />
           </div>
         </div>

@@ -9,7 +9,10 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "TrifoBet - Casino Online y Apuestas Deportivas",
   description: "El mejor casino online con apuestas deportivas, juegos y promociones.",
-  generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/icon.png',
+  }
 }
 
 export default function RootLayout({ children }) {

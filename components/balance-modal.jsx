@@ -229,7 +229,12 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
     setIsLoadingHistory(true)
     try {
       const data = await apiGet('/transacciones/historial')
-      const trans = data?.transacciones || (Array.isArray(data) ? data : [])
+      let trans = data?.transacciones || (Array.isArray(data) ? data : [])
+      
+      // Filtrar solo retiros y depósitos (y variantes)
+      const tiposValidos = ['deposito', 'retiro', 'recarga', 'abono']
+      trans = trans.filter(t => tiposValidos.includes(t.tipo?.toLowerCase()))
+      
       setTransactionHistory(trans)
       
       const pendingRetiros = trans

@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Users } from "lucide-react"
+import { Clock, Users, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 export default function BaloncestoPage() {
   const partidos = [
@@ -31,7 +32,15 @@ export default function BaloncestoPage() {
 
   return (
     <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">🏀 Apuestas de Baloncesto</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/apuestas">
+          <Button variant="ghost" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Volver
+          </Button>
+        </Link>
+        <h1 className="text-3xl font-bold flex items-center gap-2">🏀 Apuestas de Baloncesto</h1>
+      </div>
 
       <div className="grid gap-4">
         {partidos.map((partido) => (

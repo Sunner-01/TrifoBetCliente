@@ -222,7 +222,7 @@ export default function Navbar() {
                               <Link
                                 key={subItem.path}
                                 href={subItem.path}
-                                className={`block text-base transition-colors hover:text-primary ${pathname === subItem.path ? "text-primary" : "text-muted-foreground"
+                                className={`block text-lg transition-colors hover:text-primary ${pathname === subItem.path ? "text-primary font-bold" : "text-muted-foreground"
                                   }`}
                                 onClick={() => setIsOpen(false)}
                               >
@@ -234,7 +234,7 @@ export default function Navbar() {
                       ) : (
                         <Link
                           href={route.path}
-                          className={`text-lg font-medium transition-colors hover:text-primary ${pathname === route.path ? "text-primary" : "text-muted-foreground"
+                          className={`block text-xl transition-colors hover:text-primary ${pathname === route.path || (route.path !== "/" && pathname.startsWith(route.path)) ? "text-primary font-bold" : "text-muted-foreground font-medium"
                             }`}
                           onClick={() => setIsOpen(false)}
                         >
@@ -321,6 +321,7 @@ export default function Navbar() {
               </SheetContent>
             </Sheet>
             <Link href="/" className="flex items-center space-x-2">
+              <img src="/icon.png" alt="TrifoBet Logo" className="w-8 h-8 rounded-full" />
               <span className="font-bold text-xl bg-gradient-to-r from-green-500 to-green-700 text-transparent bg-clip-text">
                 TrifoBet
               </span>
@@ -335,9 +336,9 @@ export default function Navbar() {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
-                        className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${pathname === route.path || pathname.startsWith(`${route.path}/`)
-                          ? "text-primary"
-                          : "text-muted-foreground"
+                        className={`text-base transition-colors hover:text-primary flex items-center gap-1 ${pathname === route.path || pathname.startsWith(`${route.path}/`)
+                          ? "text-primary font-bold"
+                          : "text-muted-foreground font-medium"
                           }`}
                       >
                         {route.name}
@@ -349,7 +350,7 @@ export default function Navbar() {
                         <DropdownMenuItem key={subItem.path} asChild>
                           <Link
                             href={subItem.path}
-                            className={`w-full ${pathname === subItem.path ? "text-primary" : ""}`}
+                            className={`w-full text-base ${pathname === subItem.path ? "text-primary font-bold" : ""}`}
                           >
                             {subItem.name}
                           </Link>
@@ -360,7 +361,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={route.path}
-                    className={`text-sm font-medium transition-colors hover:text-primary ${pathname === route.path ? "text-primary" : "text-muted-foreground"
+                    className={`text-base transition-colors hover:text-primary ${pathname === route.path || (route.path !== "/" && pathname.startsWith(route.path)) ? "text-primary font-bold" : "text-muted-foreground font-medium"
                       }`}
                   >
                     {route.name}
