@@ -494,13 +494,31 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
                             type="number"
                             placeholder="0.00"
                             value={withdrawAmount}
-                            onChange={(e) => setWithdrawAmount(e.target.value)}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val.includes('-')) return;
+                              setWithdrawAmount(val);
+                            }}
+                            onKeyDown={(e) => {
+                              if (['-', '+', 'e', 'E'].includes(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
                             className="pl-10"
                             step="0.01"
                             min="0"
                             max={balance}
                           />
                         </div>
+                        {withdrawAmount && parseFloat(withdrawAmount) < 10 && (
+                          <p className="text-red-500 text-xs mt-1">El monto mínimo de retiro es Bs 10</p>
+                        )}
+                        {withdrawAmount && parseFloat(withdrawAmount) > 15000 && (
+                          <p className="text-red-500 text-xs mt-1">El monto máximo de retiro es Bs 15,000</p>
+                        )}
+                        {withdrawAmount && parseFloat(withdrawAmount) > balance && (
+                          <p className="text-red-500 text-xs mt-1">Saldo insuficiente</p>
+                        )}
                       </div>
                       <Button
                         onClick={() => {
@@ -517,7 +535,14 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
                           setWithdrawDialog({ isOpen: true })
                         }}
                         className="w-full h-12"
-                        disabled={!withdrawAmount || parseFloat(withdrawAmount) > balance || !selectedPaymentMethod || isProcessing}
+                        disabled={
+                          !withdrawAmount || 
+                          !selectedPaymentMethod || 
+                          parseFloat(withdrawAmount) < 10 || 
+                          parseFloat(withdrawAmount) > 15000 || 
+                          parseFloat(withdrawAmount) > balance || 
+                          isProcessing
+                        }
                       >
                         {isProcessing ? "Procesando..." : "Retirar"}
                       </Button>
