@@ -162,7 +162,7 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
   const fetchHistory = async () => {
     setIsLoadingHistory(true)
     try {
-      const data = await apiGet('/transacciones/historial')
+      const data = await apiGet('/transacciones/historial?tipo=deposito,retiro,recarga,abono&limit=50')
       console.log('HISTORY DATA:', data)
       let trans = data?.transacciones || (Array.isArray(data) ? data : [])
       
