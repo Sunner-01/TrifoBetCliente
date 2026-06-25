@@ -91,21 +91,19 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
       return;
     }
 
-    setRegisterData({ usuario, email, password });
+    setRegisterData(prev => ({ ...prev, usuario, email, password }));
     setRegisterStep(2);
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setStep2Error(null);
-    const form = e.target;
-
-    const nombreVal = form["first-name"].value.trim();
-    const apellido1Val = form["last-name"].value.trim();
-    const apellido2Val = form["second-last-name"].value.trim();
-    const fechaNacimiento = form["dob"].value;
-    const phoneVal = form["phone"].value.trim();
-    const ciVal = form["document-number"].value.trim();
+    const nombreVal = registerData.firstName.trim();
+    const apellido1Val = registerData.lastName.trim();
+    const apellido2Val = registerData.secondLastName.trim();
+    const fechaNacimiento = registerData.dob;
+    const phoneVal = registerData.phone.trim();
+    const ciVal = registerData.ci.trim();
     
     if (!nombreVal || !apellido1Val) {
       setStep2Error("El nombre y el primer apellido son obligatorios");
@@ -151,14 +149,14 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
     }
 
     const payload = {
-      nombre: form["first-name"].value.trim(),
-      apellido1: form["last-name"].value.trim(),
-      apellido2: form["second-last-name"].value.trim() || "",
-      ci: form["document-number"].value.trim(),
+      nombre: nombreVal,
+      apellido1: apellido1Val,
+      apellido2: apellido2Val,
+      ci: ciVal,
       fechaNacimiento: fechaNacimiento,
       nombreUsuario: registerData.usuario,
       correo: registerData.email,
-      telefono: "+591" + form["phone"].value.trim(),
+      telefono: "+591" + phoneVal,
       contrasena: registerData.password,
       paisCodigo: "BO",
     };
