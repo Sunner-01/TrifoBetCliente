@@ -14,15 +14,61 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [step, setStep] = useState(1)
 
+  // Formularios controlados
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [ci, setCi] = useState("")
+  const [dob, setDob] = useState("")
+  
+  const [errors, setErrors] = useState({})
+
+  const validateStep1 = () => {
+    const newErrors = {}
+    if (!email || !/\S+@\S+\.\S+/.test(email)) newErrors.email = "Correo electrónico inválido"
+    if (!password || password.length < 8) newErrors.password = "Debe tener al menos 8 caracteres"
+    if (password !== confirmPassword) newErrors.confirmPassword = "Las contraseñas no coinciden"
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const validateStep2 = () => {
+    const newErrors = {}
+    if (!firstName) newErrors.firstName = "El nombre es requerido"
+    if (!lastName) newErrors.lastName = "El apellido es requerido"
+    if (!phone || phone.length < 8) newErrors.phone = "Teléfono inválido (mínimo 8 dígitos)"
+    if (!ci || ci.length < 5) newErrors.ci = "Carnet de identidad inválido"
+    
+    if (!dob) {
+      newErrors.dob = "Fecha de nacimiento requerida"
+    } else {
+      const age = new Date().getFullYear() - new Date(dob).getFullYear()
+      if (age < 18) newErrors.dob = "Debes ser mayor de 18 años"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleNextStep = (e) => {
     e.preventDefault()
-    setStep(2)
+    if (validateStep1()) {
+      setStep(2)
+      setErrors({})
+    }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Handle registration logic
-    console.log("Form submitted")
+    if (validateStep2()) {
+      console.log("Form submitted", { email, password, firstName, lastName, phone, ci, dob })
+      // Handle registration logic
+    }
   }
 
   return (
@@ -38,12 +84,13 @@ export default function RegisterPage() {
               <div className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="nombre@ejemplo.com" required />
+                  <Input id="email" type="email" placeholder="nombre@ejemplo.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Contraseña</Label>
                   <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••" required />
+                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     <Button
                       type="button"
                       variant="ghost"
@@ -55,9 +102,12 @@ export default function RegisterPage() {
                       <span className="sr-only">{showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}</span>
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    La contraseña debe tener al menos 8 caracteres, incluyendo una letra mayúscula y un número.
-                  </p>
+                  {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
+                  {!errors.password && (
+                    <p className="text-xs text-muted-foreground">
+                      La contraseña debe tener al menos 8 caracteres, incluyendo una letra mayúscula y un número.
+                    </p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
@@ -66,9 +116,12 @@ export default function RegisterPage() {
                       id="confirm-password"
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
+                      value={confirmPassword} 
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                     />
                   </div>
+                  {errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword}</p>}
                 </div>
                 <Button type="submit" className="w-full">
                   Continuar
@@ -81,20 +134,58 @@ export default function RegisterPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="first-name">Nombre</Label>
-                    <Input id="first-name" placeholder="Sunner" required />
+                    <Input id="first-name" placeholder="Sunner" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                    {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="last-name">Apellido</Label>
-                    <Input id="last-name" placeholder="Barrera" required />
+                    <Input id="last-name" placeholder="Barrera" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+                    {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
                   </div>
                 </div>
+                
+                <div className="grid gap-2">
+                  <Label htmlFor="ci">Carnet de Identidad (CI)</Label>
+                  <Input 
+                    id="ci" 
+                    type="text" 
+                    placeholder="Ej: 1234567" 
+                    value={ci} 
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '')
+                      setCi(val)
+                    }} 
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
+                    }}
+                    required 
+                  />
+                  {errors.ci && <p className="text-red-500 text-xs">{errors.ci}</p>}
+                </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="phone">Teléfono</Label>
-                  <Input id="phone" type="tel" placeholder="+591 67614221" required />
+                  <Input 
+                    id="phone" 
+                    type="tel" 
+                    placeholder="Ej: 67614221" 
+                    value={phone} 
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '')
+                      setPhone(val)
+                    }} 
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
+                    }}
+                    required 
+                  />
+                  {errors.phone && <p className="text-red-500 text-xs">{errors.phone}</p>}
                 </div>
+                
                 <div className="grid gap-2">
                   <Label htmlFor="dob">Fecha de Nacimiento</Label>
-                  <Input id="dob" type="date" required />
+                  <Input id="dob" type="date" value={dob} onChange={(e) => setDob(e.target.value)} required />
+                  {errors.dob && <p className="text-red-500 text-xs">{errors.dob}</p>}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="country">País</Label>

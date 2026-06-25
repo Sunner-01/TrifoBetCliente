@@ -13,6 +13,8 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
   const [registerData, setRegisterData] = useState({ usuario: "", email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
+  const [step1Error, setStep1Error] = useState(null);
+  const [step2Error, setStep2Error] = useState(null);
   
   const [paises, setPaises] = useState([]);
   const [paisSeleccionado, setPaisSeleccionado] = useState("BO");
@@ -65,26 +67,27 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
 
   const handleRegisterNext = (e) => {
     e.preventDefault();
+    setStep1Error(null);
     const usuario = e.target["usuario-register"].value.trim();
     const email = e.target["email-register"].value.trim();
     const password = e.target["password-register"].value;
     const confirmPassword = e.target["confirm-password"].value;
 
     if (!usuario || !email || !password || !confirmPassword) {
-      toast({ title: "Error", description: "Todos los campos son obligatorios", variant: "destructive" });
+      setStep1Error("Todos los campos son obligatorios");
       return;
     }
     if (password !== confirmPassword) {
-      toast({ title: "Error", description: "Las contraseñas no coinciden", variant: "destructive" });
+      setStep1Error("Las contraseñas no coinciden");
       return;
     }
     if (password.length < 6) {
-      toast({ title: "Error", description: "La contraseña debe tener al menos 6 caracteres", variant: "destructive" });
+      setStep1Error("La contraseña debe tener al menos 6 caracteres");
       return;
     }
     const pwdRegex = /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
     if (!pwdRegex.test(password)) {
-      toast({ title: "Error", description: "La contraseña debe tener mayúscula, minúscula y número", variant: "destructive" });
+      setStep1Error("La contraseña debe tener mayúscula, minúscula y número");
       return;
     }
 
@@ -94,9 +97,21 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setStep2Error(null);
     const form = e.target;
 
     const fechaNacimiento = form["dob"].value;
+    const phoneVal = form["phone"].value.trim();
+    const ciVal = form["document-number"].value.trim();
+    
+    if (phoneVal.length < 8) {
+      setStep2Error("El teléfono debe tener al menos 8 dígitos");
+      return;
+    }
+    if (ciVal.length < 5) {
+      setStep2Error("Carnet de Identidad muy corto");
+      return;
+    }
     
     // Frontend Age Validation
     const dob = new Date(fechaNacimiento);
@@ -107,7 +122,7 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
       age--;
     }
     if (age < 18) {
-      toast({ title: "Error", description: "Debes ser mayor de 18 años para registrarte", variant: "destructive" });
+      setStep2Error("Debes ser mayor de 18 años para registrarte");
       return;
     }
 
@@ -153,10 +168,10 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
         }
       } else {
         const errorMsg = Array.isArray(data.message) ? data.message.join("\n") : (data.message || "Usuario o correo ya existen");
-        toast({ title: "Error", description: errorMsg, variant: "destructive" });
+        setStep2Error(errorMsg);
       }
     } catch (error) {
-      toast({ title: "Error", description: "Error de conexión al servidor", variant: "destructive" });
+      setStep2Error("Error de conexión al servidor");
     }
   };
 
@@ -165,6 +180,8 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
     setShowPassword(false);
     setCredentials({ usuario: "", contrasena: "" });
     setRegisterData({ usuario: "", email: "", password: "" });
+    setStep1Error(null);
+    setStep2Error(null);
     formRef.current?.reset();
   };
 
@@ -183,7 +200,7 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
     activeTab, handleTabChange,
     registerStep, setRegisterStep,
     credentials, setCredentials,
-    isLoading, loginError,
+    isLoading, loginError, step1Error, step2Error,
     paises, paisSeleccionado, setPaisSeleccionado, loadingPaises,
     handleLogin, handleRegisterNext, handleRegister, handleClose,
     formRef

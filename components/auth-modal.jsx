@@ -32,7 +32,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
     activeTab, handleTabChange,
     registerStep, setRegisterStep,
     credentials, setCredentials,
-    isLoading, loginError,
+    isLoading, loginError, step1Error, step2Error,
     paises, paisSeleccionado, setPaisSeleccionado, loadingPaises,
     handleLogin, handleRegisterNext, handleRegister, handleClose,
     formRef
@@ -126,6 +126,13 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
                   </Button>
                 </div>
                 <Input id="confirm-password" type={showPassword ? "text" : "password"} placeholder="Confirmar contraseña" required />
+                
+                {step1Error && (
+                  <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-sm text-destructive text-center">
+                    {step1Error}
+                  </div>
+                )}
+                
                 <Button type="submit" className="w-full">Continuar</Button>
               </form>
             ) : (
@@ -136,12 +143,42 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
                     <Input id="last-name" placeholder="Primer Apellido" required />
                     <Input id="second-last-name" placeholder="Segundo Apellido" />
                   </div>
-                  <Input id="document-number" placeholder="Número de Documento" inputMode="numeric" required />
+                  <Input 
+                    id="document-number" 
+                    placeholder="Número de Documento" 
+                    inputMode="numeric" 
+                    required 
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
+                    }}
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/\D/g, '')
+                    }}
+                  />
                   <Input id="dob" type="date" placeholder="Fecha de Nacimiento" required />
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">+591</span>
-                    <Input id="phone" type="tel" inputMode="numeric" placeholder="71234567" required className="pl-12" />
+                    <Input 
+                      id="phone" 
+                      type="tel" 
+                      inputMode="numeric" 
+                      placeholder="71234567" 
+                      required 
+                      className="pl-12" 
+                      onKeyDown={(e) => {
+                        if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
+                      }}
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/\D/g, '')
+                      }}
+                    />
                   </div>
+
+                  {step2Error && (
+                    <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-sm text-destructive text-center">
+                      {step2Error}
+                    </div>
+                  )}
 
 
 
