@@ -147,6 +147,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
                     id="document-number" 
                     placeholder="Número de Documento" 
                     inputMode="numeric" 
+                    maxLength={10}
                     required 
                     onKeyDown={(e) => {
                       if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
@@ -163,6 +164,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
                       type="tel" 
                       inputMode="numeric" 
                       placeholder="71234567" 
+                      maxLength={8}
                       required 
                       className="pl-12" 
                       onKeyDown={(e) => {

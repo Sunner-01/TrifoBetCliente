@@ -39,10 +39,19 @@ export default function RegisterPage() {
 
   const validateStep2 = () => {
     const newErrors = {}
-    if (!firstName) newErrors.firstName = "El nombre es requerido"
-    if (!lastName) newErrors.lastName = "El apellido es requerido"
-    if (!phone || phone.length < 8) newErrors.phone = "Teléfono inválido (mínimo 8 dígitos)"
-    if (!ci || ci.length < 5) newErrors.ci = "Carnet de identidad inválido"
+    
+    if (!firstName || firstName.length < 3 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(firstName)) {
+      newErrors.firstName = "El nombre debe tener al menos 3 caracteres y solo letras"
+    }
+    if (!lastName || lastName.length < 3 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(lastName)) {
+      newErrors.lastName = "El apellido debe tener al menos 3 caracteres y solo letras"
+    }
+    if (!phone || !/^[67][0-9]{7}$/.test(phone)) {
+      newErrors.phone = "El teléfono debe empezar con 6 o 7 y tener exactamente 8 dígitos"
+    }
+    if (!ci || !/^[0-9]{5,10}$/.test(ci)) {
+      newErrors.ci = "Carnet de Identidad inválido (5 a 10 dígitos)"
+    }
     
     if (!dob) {
       newErrors.dob = "Fecha de nacimiento requerida"
@@ -134,12 +143,26 @@ export default function RegisterPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="first-name">Nombre</Label>
-                    <Input id="first-name" placeholder="Sunner" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                    <Input id="first-name" placeholder="Sunner" value={firstName} onChange={(e) => {
+                      setFirstName(e.target.value)
+                      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(e.target.value)) {
+                        setErrors(prev => ({...prev, firstName: "Solo letras"}))
+                      } else {
+                        setErrors(prev => ({...prev, firstName: null}))
+                      }
+                    }} required />
                     {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="last-name">Apellido</Label>
-                    <Input id="last-name" placeholder="Barrera" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+                    <Input id="last-name" placeholder="Barrera" value={lastName} onChange={(e) => {
+                      setLastName(e.target.value)
+                      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(e.target.value)) {
+                        setErrors(prev => ({...prev, lastName: "Solo letras"}))
+                      } else {
+                        setErrors(prev => ({...prev, lastName: null}))
+                      }
+                    }} required />
                     {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
                   </div>
                 </div>
@@ -151,9 +174,15 @@ export default function RegisterPage() {
                     type="text" 
                     placeholder="Ej: 1234567" 
                     value={ci} 
+                    maxLength={10}
                     onChange={(e) => {
                       const val = e.target.value.replace(/\D/g, '')
                       setCi(val)
+                      if (val && !/^[0-9]{5,10}$/.test(val)) {
+                        setErrors(prev => ({...prev, ci: "CI inválido (5 a 10 dígitos)"}))
+                      } else {
+                        setErrors(prev => ({...prev, ci: null}))
+                      }
                     }} 
                     onKeyDown={(e) => {
                       if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
@@ -170,9 +199,15 @@ export default function RegisterPage() {
                     type="tel" 
                     placeholder="Ej: 67614221" 
                     value={phone} 
+                    maxLength={8}
                     onChange={(e) => {
                       const val = e.target.value.replace(/\D/g, '')
                       setPhone(val)
+                      if (val && !/^[67][0-9]{7}$/.test(val)) {
+                        setErrors(prev => ({...prev, phone: "Debe empezar con 6 o 7 y tener 8 dígitos"}))
+                      } else {
+                        setErrors(prev => ({...prev, phone: null}))
+                      }
                     }} 
                     onKeyDown={(e) => {
                       if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
