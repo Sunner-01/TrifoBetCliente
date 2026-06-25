@@ -100,16 +100,40 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
     setStep2Error(null);
     const form = e.target;
 
+    const nombreVal = form["first-name"].value.trim();
+    const apellido1Val = form["last-name"].value.trim();
+    const apellido2Val = form["second-last-name"].value.trim();
     const fechaNacimiento = form["dob"].value;
     const phoneVal = form["phone"].value.trim();
     const ciVal = form["document-number"].value.trim();
     
-    if (phoneVal.length < 8) {
-      setStep2Error("El teléfono debe tener al menos 8 dígitos");
+    if (!nombreVal || !apellido1Val) {
+      setStep2Error("El nombre y el primer apellido son obligatorios");
       return;
     }
-    if (ciVal.length < 5) {
-      setStep2Error("Carnet de Identidad muy corto");
+    
+    if (nombreVal.length < 3 || apellido1Val.length < 3) {
+      setStep2Error("El nombre y apellido deben tener al menos 3 caracteres");
+      return;
+    }
+    
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombreVal) || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(apellido1Val)) {
+      setStep2Error("El nombre y apellido solo pueden contener letras");
+      return;
+    }
+
+    if (apellido2Val && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(apellido2Val)) {
+      setStep2Error("El segundo apellido solo puede contener letras");
+      return;
+    }
+
+    if (!/^[67][0-9]{7}$/.test(phoneVal)) {
+      setStep2Error("El teléfono debe empezar con 6 o 7 y tener exactamente 8 dígitos");
+      return;
+    }
+
+    if (!ciVal || !/^[0-9]{5,10}$/.test(ciVal)) {
+      setStep2Error("El número de documento (CI) es inválido");
       return;
     }
     
