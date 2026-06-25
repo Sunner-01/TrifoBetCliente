@@ -76,8 +76,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/soporte" className="text-zinc-400 hover:text-primary hover:translate-x-2 transition-all flex items-center text-sm font-medium">
-                  Juego Responsable
+                <Link href="/reglas" className="text-zinc-400 hover:text-primary hover:translate-x-2 transition-all flex items-center text-sm font-medium">
+                  Reglas y Políticas
                 </Link>
               </li>
             </ul>
