@@ -10,7 +10,7 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [registerStep, setRegisterStep] = useState(1);
   const [credentials, setCredentials] = useState({ usuario: "", contrasena: "" });
-  const [registerData, setRegisterData] = useState({ usuario: "", email: "", password: "" });
+  const [registerData, setRegisterData] = useState({ usuario: "", email: "", password: "", firstName: "", lastName: "", secondLastName: "", ci: "", dob: "", phone: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [step1Error, setStep1Error] = useState(null);
@@ -203,7 +203,7 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
     setRegisterStep(1);
     setShowPassword(false);
     setCredentials({ usuario: "", contrasena: "" });
-    setRegisterData({ usuario: "", email: "", password: "" });
+    setRegisterData({ usuario: "", email: "", password: "", firstName: "", lastName: "", secondLastName: "", ci: "", dob: "", phone: "" });
     setStep1Error(null);
     setStep2Error(null);
     formRef.current?.reset();
@@ -224,9 +224,9 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
     activeTab, handleTabChange,
     registerStep, setRegisterStep,
     credentials, setCredentials,
-    isLoading, loginError, step1Error, step2Error,
+    isLoading, loginError, step1Error, step2Error, setStep2Error,
     paises, paisSeleccionado, setPaisSeleccionado, loadingPaises,
     handleLogin, handleRegisterNext, handleRegister, handleClose,
-    formRef
+    formRef, registerData, setRegisterData
   };
 }

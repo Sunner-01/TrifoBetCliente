@@ -32,10 +32,10 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
     activeTab, handleTabChange,
     registerStep, setRegisterStep,
     credentials, setCredentials,
-    isLoading, loginError, step1Error, step2Error,
+    isLoading, loginError, step1Error, step2Error, setStep2Error,
     paises, paisSeleccionado, setPaisSeleccionado, loadingPaises,
     handleLogin, handleRegisterNext, handleRegister, handleClose,
-    formRef
+    formRef, registerData, setRegisterData
   } = useAuthModalLogic({ defaultTab, onLogin, onClose });
 
   return (
@@ -139,24 +139,64 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
               <div className="max-h-[60vh] overflow-y-auto pr-2">
                 <form ref={formRef} onSubmit={handleRegister} className="space-y-4">
                   <div className="grid grid-cols-3 gap-4">
-                    <Input id="first-name" placeholder="Nombre" required />
-                    <Input id="last-name" placeholder="Primer Apellido" required />
-                    <Input id="second-last-name" placeholder="Segundo Apellido" />
+                    <Input 
+                      id="first-name" 
+                      placeholder="Nombre" 
+                      value={registerData.firstName}
+                      onChange={(e) => {
+                        setRegisterData({...registerData, firstName: e.target.value})
+                        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(e.target.value)) setStep2Error("El nombre solo puede contener letras")
+                        else setStep2Error(null)
+                      }}
+                      required 
+                    />
+                    <Input 
+                      id="last-name" 
+                      placeholder="Primer Apellido" 
+                      value={registerData.lastName}
+                      onChange={(e) => {
+                        setRegisterData({...registerData, lastName: e.target.value})
+                        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(e.target.value)) setStep2Error("El apellido solo puede contener letras")
+                        else setStep2Error(null)
+                      }}
+                      required 
+                    />
+                    <Input 
+                      id="second-last-name" 
+                      placeholder="Segundo Apellido" 
+                      value={registerData.secondLastName}
+                      onChange={(e) => {
+                        setRegisterData({...registerData, secondLastName: e.target.value})
+                        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(e.target.value)) setStep2Error("El apellido solo puede contener letras")
+                        else setStep2Error(null)
+                      }}
+                    />
                   </div>
                   <Input 
                     id="document-number" 
                     placeholder="Número de Documento" 
                     inputMode="numeric" 
                     maxLength={10}
-                    required 
+                    value={registerData.ci}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '')
+                      setRegisterData({...registerData, ci: val})
+                      if (val && !/^[0-9]{5,10}$/.test(val)) setStep2Error("CI inválido (5 a 10 dígitos)")
+                      else setStep2Error(null)
+                    }}
                     onKeyDown={(e) => {
                       if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
                     }}
-                    onInput={(e) => {
-                      e.target.value = e.target.value.replace(/\D/g, '')
-                    }}
+                    required 
                   />
-                  <Input id="dob" type="date" placeholder="Fecha de Nacimiento" required />
+                  <Input 
+                    id="dob" 
+                    type="date" 
+                    placeholder="Fecha de Nacimiento" 
+                    value={registerData.dob}
+                    onChange={(e) => setRegisterData({...registerData, dob: e.target.value})}
+                    required 
+                  />
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">+591</span>
                     <Input 
@@ -165,14 +205,18 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
                       inputMode="numeric" 
                       placeholder="71234567" 
                       maxLength={8}
-                      required 
-                      className="pl-12" 
+                      value={registerData.phone}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '')
+                        setRegisterData({...registerData, phone: val})
+                        if (val && !/^[67][0-9]{7}$/.test(val)) setStep2Error("El teléfono debe empezar con 6 o 7 y tener exactamente 8 dígitos")
+                        else setStep2Error(null)
+                      }}
                       onKeyDown={(e) => {
                         if (['e', 'E', '+', '-', '.', ','].includes(e.key)) e.preventDefault()
                       }}
-                      onInput={(e) => {
-                        e.target.value = e.target.value.replace(/\D/g, '')
-                      }}
+                      required 
+                      className="pl-12" 
                     />
                   </div>
 
