@@ -45,7 +45,7 @@ import { saveAuth, getStoredUser, getStoredToken } from "@/lib/auth"
 import { API_Back_Url as API_URL } from "@/lib/config"
 import { apiGet } from "@/lib/api"
 
-export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate }) {
+export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate, onOpenYape }) {
   const router = useRouter()
   const [depositAmount, setDepositAmount] = useState("")
   const [withdrawAmount, setWithdrawAmount] = useState("")
@@ -85,82 +85,16 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
 
   const paymentMethods = [
     {
-      id: "card",
-      name: "Tarjeta de Crédito/Débito",
-      icon: CreditCard,
-      description: "Visa, Mastercard, American Express",
+      id: "yape",
+      name: "Yape",
+      icon: Smartphone,
+      description: "Pago instantáneo con QR",
       minAmount: 10,
       maxAmount: 5000,
       fee: "Gratis",
       processingTime: "Instantáneo",
       popular: true,
-    },
-    {
-      id: "qr",
-      name: "Pago por QR",
-      icon: QrCode,
-      description: "Escanea y paga con tu móvil",
-      minAmount: 5,
-      maxAmount: 1000,
-      fee: "Gratis",
-      processingTime: "Instantáneo",
-      popular: true,
-    },
-    {
-      id: "paypal",
-      name: "PayPal",
-      icon: Wallet,
-      description: "Pago seguro con PayPal",
-      minAmount: 10,
-      maxAmount: 2500,
-      fee: "2.9%",
-      processingTime: "Instantáneo",
-      popular: true,
-    },
-    {
-      id: "skrill",
-      name: "Skrill",
-      icon: Smartphone,
-      description: "Monedero electrónico",
-      minAmount: 10,
-      maxAmount: 10000,
-      fee: "1.9%",
-      processingTime: "Instantáneo",
-      popular: false,
-    },
-    {
-      id: "neteller",
-      name: "Neteller",
-      icon: Smartphone,
-      description: "Monedero electrónico",
-      minAmount: 10,
-      maxAmount: 10000,
-      fee: "1.9%",
-      processingTime: "Instantáneo",
-      popular: false,
-    },
-    {
-      id: "bank",
-      name: "Transferencia Bancaria",
-      icon: Building2,
-      description: "Transferencia directa desde tu banco",
-      minAmount: 50,
-      maxAmount: 50000,
-      fee: "Gratis",
-      processingTime: "1-3 días hábiles",
-      popular: false,
-    },
-    {
-      id: "crypto",
-      name: "Criptomonedas",
-      icon: Zap,
-      description: "Bitcoin, Ethereum, USDT",
-      minAmount: 20,
-      maxAmount: 100000,
-      fee: "1%",
-      processingTime: "15-30 minutos",
-      popular: false,
-    },
+    }
   ]
 
   const withdrawalMethods = [
@@ -229,12 +163,14 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
     setIsLoadingHistory(true)
     try {
       const data = await apiGet('/transacciones/historial')
+      console.log('HISTORY DATA:', data)
       let trans = data?.transacciones || (Array.isArray(data) ? data : [])
       
       // Filtrar solo retiros y depósitos (y variantes)
       const tiposValidos = ['deposito', 'retiro', 'recarga', 'abono']
       trans = trans.filter(t => tiposValidos.includes(t.tipo?.toLowerCase()))
       
+      console.log('FILTERED TRANS:', trans)
       setTransactionHistory(trans)
       
       const pendingRetiros = trans
@@ -477,85 +413,26 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
                       </div>
                     </div>
 
-                    <div>
-                      <h3 className="font-semibold mb-4">Monto a Depositar</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="deposit-amount">Monto</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground">
-                              Bs
-                            </span>
-                            <Input
-                              id="deposit-amount"
-                              type="number"
-                              placeholder="0.00"
-                              value={depositAmount}
-                              onChange={(e) => setDepositAmount(e.target.value)}
-                              className="pl-10"
-                              step="0.01"
-                              min="0"
-                            />
-                          </div>
+                    <div className="flex flex-col h-full justify-center">
+                      <div className="text-center space-y-6">
+                        <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <QrCode className="h-10 w-10 text-primary" />
                         </div>
-
                         <div>
-                          <Label>Montos Rápidos</Label>
-                          <div className="grid grid-cols-4 gap-2 mt-2">
-                            {[25, 50, 100, 250].map((amount) => (
-                              <Button
-                                key={amount}
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setDepositAmount(amount.toString())}
-                                className="text-xs"
-                              >
-                                Bs {amount}
-                              </Button>
-                            ))}
-                          </div>
+                          <h3 className="font-bold text-xl mb-2">Recarga Rápida con Yape</h3>
+                          <p className="text-muted-foreground mb-6">
+                            Escanea nuestro código QR de Yape desde tu celular y recarga tu cuenta al instante sin comisiones.
+                          </p>
                         </div>
-
-                        {selectedPaymentMethod && (
-                          <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-2">
-                                <Info className="h-4 w-4 text-blue-600 mt-0.5" />
-                                <div className="text-sm">
-                                  <p className="font-medium text-blue-800 dark:text-blue-400">Información del Método</p>
-                                  {(() => {
-                                    const method = paymentMethods.find((m) => m.id === selectedPaymentMethod)
-                                    return (
-                                      <div className="text-blue-700 dark:text-blue-300 mt-1 space-y-1">
-                                        <p>• Monto mínimo: Bs {method?.minAmount}</p>
-                                        <p>• Monto máximo: Bs {method?.maxAmount}</p>
-                                        <p>• Comisión: {method?.fee}</p>
-                                        <p>• Tiempo de procesamiento: {method?.processingTime}</p>
-                                      </div>
-                                    )
-                                  })()}
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        )}
-
+                        
                         <Button
-                          onClick={handleDeposit}
-                          className="w-full h-12"
-                          disabled={!depositAmount || !selectedPaymentMethod || isProcessing}
+                          onClick={() => {
+                            if (onOpenYape) onOpenYape();
+                          }}
+                          className="w-full h-12 text-lg"
                         >
-                          {isProcessing ? (
-                            <div className="flex items-center gap-2">
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                              Procesando...
-                            </div>
-                          ) : (
-                            <>
-                              <ArrowUpRight className="h-4 w-4 mr-2" />
-                              Depositar Bs {depositAmount || "0.00"}
-                            </>
-                          )}
+                          <QrCode className="h-5 w-5 mr-2" />
+                          Abrir recarga con Yape
                         </Button>
                       </div>
                     </div>
@@ -628,6 +505,15 @@ export default function BalanceModal({ isOpen, onClose, balance, onBalanceUpdate
                       <Button
                         onClick={() => {
                           if (!selectedPaymentMethod || !withdrawAmount) return
+                          const amount = parseFloat(withdrawAmount);
+                          if (amount < 10) {
+                            toast({ title: "Error", description: "El monto mínimo de retiro es Bs 10", variant: "destructive" });
+                            return;
+                          }
+                          if (amount > 15000) {
+                            toast({ title: "Error", description: "El monto máximo de retiro es Bs 15,000", variant: "destructive" });
+                            return;
+                          }
                           setWithdrawDialog({ isOpen: true })
                         }}
                         className="w-full h-12"

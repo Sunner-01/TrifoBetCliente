@@ -50,6 +50,11 @@ export function PendingBetsTab({ pendingBets, loadingPending }) {
           </div>
         </div>
       ))}
+      <div className="pt-2 flex justify-center">
+        <Button variant="outline" size="sm" className="w-full" onClick={() => window.dispatchEvent(new CustomEvent('open-bet-history'))}>
+          Ver Historial Completo
+        </Button>
+      </div>
     </>
   )
 }

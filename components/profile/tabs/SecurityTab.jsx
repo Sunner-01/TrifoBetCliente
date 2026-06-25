@@ -101,33 +101,6 @@ export function SecurityTab({ isEditing, formData }) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Smartphone className="h-5 w-5" />
-            Autenticación de Dos Factores
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">SMS</p>
-              <p className="text-sm text-muted-foreground">Recibir códigos por SMS</p>
-            </div>
-            <Switch checked={false} onCheckedChange={() => { }} disabled={!isEditing} />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">App Autenticadora</p>
-              <p className="text-sm text-muted-foreground">Google Authenticator, Authy</p>
-            </div>
-            <Switch checked={false} onCheckedChange={() => { }} disabled={!isEditing} />
-          </div>
-          <Button variant="outline" className="w-full" disabled={!isEditing}>
-            Configurar 2FA
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 }

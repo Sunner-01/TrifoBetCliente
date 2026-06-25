@@ -136,27 +136,14 @@ export default function AuthModal({ isOpen, onClose, defaultTab = "login", onLog
                     <Input id="last-name" placeholder="Primer Apellido" required />
                     <Input id="second-last-name" placeholder="Segundo Apellido" />
                   </div>
-                  <Input id="document-number" placeholder="Número de Documento" required />
+                  <Input id="document-number" placeholder="Número de Documento" inputMode="numeric" required />
                   <Input id="dob" type="date" placeholder="Fecha de Nacimiento" required />
-                  <Input id="phone" placeholder="+591 71234567" required />
-
-                  <div className="space-y-2">
-                    <Label>País</Label>
-                    {loadingPaises ? (
-                      <div className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="text-sm">Cargando países...</span></div>
-                    ) : (
-                      <Select value={paisSeleccionado} onValueChange={setPaisSeleccionado}>
-                        <SelectTrigger><SelectValue placeholder="Selecciona tu país" /></SelectTrigger>
-                        <SelectContent>
-                          {paises.map((pais) => (
-                            <SelectItem key={pais.codigo} value={pais.codigo}>
-                              {pais.nombre_es} ({pais.codigo_telefonico})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">+591</span>
+                    <Input id="phone" type="tel" inputMode="numeric" placeholder="71234567" required className="pl-12" />
                   </div>
+
+
 
                   <div className="flex gap-4">
                     <Button type="button" variant="outline" className="w-full" onClick={() => setRegisterStep(1)}>Atrás</Button>

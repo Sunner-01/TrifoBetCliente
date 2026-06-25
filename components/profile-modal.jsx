@@ -73,19 +73,16 @@ export default function ProfileModal({ isOpen, onClose, userData = {}, onUserDat
     }
   };
 
-  const accountStats = {
+  const accountStats = formData.stats || {
     memberSince: formData.fecha_creacion ? new Date(formData.fecha_creacion).toLocaleDateString() : "N/A",
-    totalDeposits: 2500,
-    totalWithdrawals: 1200,
-    totalBets: 156,
-    winRate: 68,
-    favoriteGame: "Blackjack",
+    totalDeposits: 0,
+    totalWithdrawals: 0,
+    totalBets: 0,
+    winRate: 0,
+    favoriteGame: "N/A",
   };
 
-  const recentActivity = [
-    { type: "login", description: "Inicio de sesión", time: "Hace 2 horas" },
-    { type: "bet", description: "Apuesta en Barcelona", time: "Hace 5 horas", amount: "Bs 50", status: "won" },
-  ];
+  const recentActivity = formData.actividad_reciente || [];
 
   return (
     <>

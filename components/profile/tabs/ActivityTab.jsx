@@ -34,7 +34,7 @@ export function ActivityTab({ recentActivity }) {
               <div className="flex-1">
                 <p className="font-medium">{activity.description}</p>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>{activity.time}</span>
+                  <span>{new Date(activity.time).toLocaleString()}</span>
                   {activity.ip && <span>IP: {activity.ip}</span>}
                   {activity.device && <span>{activity.device}</span>}
                 </div>

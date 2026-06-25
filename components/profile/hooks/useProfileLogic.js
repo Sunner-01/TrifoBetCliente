@@ -20,6 +20,7 @@ export function useProfileLogic(userData, onUserDataUpdate) {
     saldo: userData?.saldo || 0.00,
     foto_perfil_url: userData?.foto_perfil_url || "/placeholder-user.jpg",
     pais_codigo: userData?.pais || "BO",
+    verificado: userData?.verificado || false,
   });
 
   const { toast } = useToast();
@@ -35,9 +36,13 @@ export function useProfileLogic(userData, onUserDataUpdate) {
         fecha_nacimiento: data.fecha_nacimiento || "",
         correo: data.correo || "",
         telefono: data.telefono || "",
+        ci: data.ci || "",
         saldo: data.saldo || 0.00,
         foto_perfil_url: data.foto_perfil_url || "/placeholder-user.jpg",
         pais_codigo: data.pais_codigo || "BO",
+        verificado: data.verificado || false,
+        stats: data.stats,
+        actividad_reciente: data.actividad_reciente,
       });
     } catch (error) {
       toast({
@@ -54,6 +59,31 @@ export function useProfileLogic(userData, onUserDataUpdate) {
       toast({ title: "Error", description: "El nombre y el primer apellido son obligatorios", variant: "destructive" });
       return false;
     }
+    
+    if (formData.nombre.length < 3 || formData.apellido1.length < 3) {
+      toast({ title: "Error", description: "El nombre y apellido deben tener al menos 3 caracteres", variant: "destructive" });
+      return false;
+    }
+    
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombre) || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.apellido1)) {
+      toast({ title: "Error", description: "El nombre y apellido solo pueden contener letras", variant: "destructive" });
+      return false;
+    }
+
+    if (formData.apellido2 && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(formData.apellido2)) {
+      toast({ title: "Error", description: "El segundo apellido solo puede contener letras", variant: "destructive" });
+      return false;
+    }
+
+    if (formData.telefono && !/^[67][0-9]{7}$/.test(formData.telefono)) {
+      toast({ title: "Error", description: "El teléfono debe empezar con 6 o 7 y tener 8 dígitos", variant: "destructive" });
+      return false;
+    }
+
+    if (formData.ci && !/^[0-9]+$/.test(formData.ci)) {
+      toast({ title: "Error", description: "El número de documento (CI) solo debe contener números", variant: "destructive" });
+      return false;
+    }
 
     try {
       await apiPatch('/perfil/me', {
@@ -61,6 +91,8 @@ export function useProfileLogic(userData, onUserDataUpdate) {
         apellido1: formData.apellido1,
         apellido2: formData.apellido2,
         telefono: formData.telefono,
+        ci: formData.ci,
+        fechaNacimiento: formData.fecha_nacimiento,
       });
 
       setHasChanges(true);

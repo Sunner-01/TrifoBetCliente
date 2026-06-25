@@ -461,6 +461,10 @@ export default function Navbar() {
         onClose={() => setShowBalanceModal(false)}
         balance={userBalance}
         onBalanceUpdate={setUserBalance}
+        onOpenYape={() => {
+          setShowBalanceModal(false)
+          setShowYapeModal(true)
+        }}
       />
       <ProfileModal
         isOpen={showProfileModal}

@@ -51,7 +51,7 @@ export function ProfileTab({ formData, setFormData, isEditing, accountStats }) {
                 type="date"
                 value={formData.fecha_nacimiento || ""}
                 onChange={(e) => setFormData({ ...formData, fecha_nacimiento: e.target.value })}
-                disabled={!isEditing}
+                disabled={!isEditing || formData.verificado}
               />
             </div>
             <div>
@@ -74,28 +74,12 @@ export function ProfileTab({ formData, setFormData, isEditing, accountStats }) {
               />
             </div>
             <div>
-              <Label htmlFor="pais">País</Label>
-              <Select
-                value={formData.pais_codigo}
-                onValueChange={(value) => setFormData({ ...formData, pais_codigo: value })}
-                disabled={!isEditing}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="BO">Bolivia</SelectItem>
-                  <SelectItem value="MX">México</SelectItem>
-                  <SelectItem value="AR">Argentina</SelectItem>
-                  <SelectItem value="CO">Colombia</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
               <Label htmlFor="numero_documento">Número de Documento (CI)</Label>
               <Input
                 id="numero_documento"
-                value={formData.numero_documento || ""}
-                onChange={(e) => setFormData({ ...formData, numero_documento: e.target.value })}
-                disabled={!isEditing}
+                value={formData.ci || ""}
+                onChange={(e) => setFormData({ ...formData, ci: e.target.value })}
+                disabled={!isEditing || formData.verificado}
               />
             </div>
           </div>

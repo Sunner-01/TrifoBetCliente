@@ -21,22 +21,10 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
   const formRef = useRef(null);
   const { toast } = useToast();
 
+  // Ya no cargamos países dinámicamente, forzamos Bolivia
   useEffect(() => {
-    if (activeTab === "register" && paises.length === 0) {
-      setLoadingPaises(true);
-      fetch(`${API_URL}/pais`)
-        .then((r) => r.json())
-        .then((data) => {
-          setPaises(data);
-          const bolivia = data.find((p) => p.codigo === "BO");
-          if (bolivia) setPaisSeleccionado(bolivia.codigo);
-        })
-        .catch(() => {
-          toast({ title: "Error", description: "No se pudieron cargar los países", variant: "destructive" });
-        })
-        .finally(() => setLoadingPaises(false));
-    }
-  }, [activeTab, paises.length, toast]);
+    // Retenido por si se necesita después, pero inactivo
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -94,6 +82,11 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
       toast({ title: "Error", description: "La contraseña debe tener al menos 6 caracteres", variant: "destructive" });
       return;
     }
+    const pwdRegex = /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
+    if (!pwdRegex.test(password)) {
+      toast({ title: "Error", description: "La contraseña debe tener mayúscula, minúscula y número", variant: "destructive" });
+      return;
+    }
 
     setRegisterData({ usuario, email, password });
     setRegisterStep(2);
@@ -103,17 +96,32 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
     e.preventDefault();
     const form = e.target;
 
+    const fechaNacimiento = form["dob"].value;
+    
+    // Frontend Age Validation
+    const dob = new Date(fechaNacimiento);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    if (age < 18) {
+      toast({ title: "Error", description: "Debes ser mayor de 18 años para registrarte", variant: "destructive" });
+      return;
+    }
+
     const payload = {
       nombre: form["first-name"].value.trim(),
       apellido1: form["last-name"].value.trim(),
       apellido2: form["second-last-name"].value.trim() || "",
       ci: form["document-number"].value.trim(),
-      fechaNacimiento: form["dob"].value,
+      fechaNacimiento: fechaNacimiento,
       nombreUsuario: registerData.usuario,
       correo: registerData.email,
-      telefono: form["phone"].value.trim(),
+      telefono: "+591" + form["phone"].value.trim(),
       contrasena: registerData.password,
-      paisCodigo: paisSeleccionado,
+      paisCodigo: "BO",
     };
 
     try {
@@ -144,7 +152,8 @@ export function useAuthModalLogic({ defaultTab, onLogin, onClose }) {
           onClose();
         }
       } else {
-        toast({ title: "Error", description: data.message || "Usuario o correo ya existen", variant: "destructive" });
+        const errorMsg = Array.isArray(data.message) ? data.message.join("\n") : (data.message || "Usuario o correo ya existen");
+        toast({ title: "Error", description: errorMsg, variant: "destructive" });
       }
     } catch (error) {
       toast({ title: "Error", description: "Error de conexión al servidor", variant: "destructive" });
